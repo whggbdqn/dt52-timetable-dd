@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.bdqn.mapper.ScheduleMapper" >
+
+  <resultMap id="BaseResultMap" type="cn.bdqn.pojo.Schedule" >
+    <id column="schedule_pk" property="schedulePk" jdbcType="INTEGER" />
+    <result column="sch_date" property="schDate" jdbcType="DATE" />
+    <result column="sch_time" property="schTime" jdbcType="VARCHAR" />
+    <result column="classes_id" property="classesId" jdbcType="INTEGER" />
+    <result column="room_id" property="roomId" jdbcType="INTEGER" />
+    <result column="steacher_id" property="teacherId" jdbcType="INTEGER" />
+    <result column="course_id" property="courseId" jdbcType="INTEGER" />
+    <result column="week" property="week" jdbcType="VARCHAR" />
+    <result column="dr" property="dr" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+  
+  <resultMap type="cn.bdqn.pojo.Schedule" id="ScheduleForWeek">
+  	<id column="schedule_pk" property="schedulePk" jdbcType="INTEGER" />
+    <result column="sch_date" property="schDate" jdbcType="DATE" />
+    <result column="sch_time" property="schTime" jdbcType="VARCHAR" />
+    <result column="classes_id" property="classesId" jdbcType="INTEGER" />
+    <result column="sroom_id" property="roomId" jdbcType="INTEGER" />
+    <result column="steacher_id" property="teacherId" jdbcType="INTEGER" />
+    <result column="course_id" property="courseId" jdbcType="INTEGER" />
+    <result column="week" property="week" jdbcType="VARCHAR" />
+    <result column="sdr" property="dr" jdbcType="INTEGER" />
+  	<association property="classes" javaType="cn.bdqn.pojo.Classes">
+  		<id column="class_pk" property="classPk" jdbcType="INTEGER" />
+	    <result column="stu_num" property="stuNum" jdbcType="INTEGER" />
+	    <result column="class_name" property="className" jdbcType="VARCHAR" />
+	    <result column="major" property="major" jdbcType="VARCHAR" />
+	    <result column="cteacher_id" property="teacherId" jdbcType="INTEGER" />
+	    <result column="instructor_id" property="instructorId" jdbcType="INTEGER" />
+	    <result column="cdr" property="dr" jdbcType="INTEGER" />
+  	</association>
+  	<association property="room" javaType="cn.bdqn.pojo.Room">
+  		<id column="rroom_id" property="roomId" jdbcType="INTEGER" />
+	    <result column="room_name" property="roomName" jdbcType="VARCHAR" />
+	    <result column="room_size" property="roomSize" jdbcType="INTEGER" />
+	    <result column="rdr" property="dr" jdbcType="INTEGER" />
+  	</association>
+  	<association property="teacher" javaType="cn.bdqn.pojo.Teacher">
+  		<id column="tteacher_id" property="teacherId" jdbcType="INTEGER" />
+	    <result column="name" property="name" jdbcType="VARCHAR" />
+	    <result column="gender" property="gender" jdbcType="VARCHAR" />
+	    <result column="schedule_name" property="scheduleName" jdbcType="VARCHAR" />
+	    <result column="tdr" property="dr" jdbcType="INTEGER" />
+	    <result column="emplId" property="emplId" javaType="STRING" />
+  	</association>
+  	<association property="course" javaType="cn.bdqn.pojo.Course">
+  		<id column="ccourse_pk" property="coursePk" jdbcType="INTEGER" />
+	    <result column="ccourse_name" property="courseName" jdbcType="VARCHAR" />
+	    <result column="ccourse_content" property="courseContent" jdbcType="VARCHAR" />
+	    <result column="cdr" property="dr" jdbcType="INTEGER" />
+  	</association>
+  </resultMap>
+  
+ 
+  
+  
+<!--   获取班级一周课表 -->
+  <select id="getSchedules" parameterType="cn.bdqn.pojo.Schedule" resultMap="ScheduleForWeek">
+	select
+	sch.schedule_pk,
+	sch.sch_date,
+	sch.sch_time,
+	sch.classes_id,
+	sch.room_id sroom_id,
+	sch.teacher_id steacher_id,
+	sch.course_id,
+	sch.`week`,
+	sch.dr sdr,
+
+	ro.room_id rroom_id,
+	ro.room_name,
+	ro.room_size,
+	ro.dr rdr,
+
+	cla.class_pk,
+	cla.stu_num,
+	cla.class_name,
+	cla.major,
+	cla.teacher_id cteacher_id,
+	cla.instructor_id,
+	cla.dr cdr,
+
+	t.teacher_id tteacher_id,
+	t.`name`,
+	t.gender,
+	t.schedule_name,
+	t.dr tdr,
+	t.emplId,
+	
+	c.course_pk ccourse_pk,
+  	c.course_name ccourse_name,
+  	c.course_content ccourse_content,
+  	c.dr cdr
+
+	from schedule sch,room ro,classes cla,teacher t,course c
+
+	where cla.class_pk =sch.classes_id
+	and ro.room_id = sch.room_id
+	and t.teacher_id = sch.teacher_id
+	and cla.class_pk = sch.classes_id
+	and c.course_pk = sch.course_id
+	
+	and (sch.sch_date between #{firstDay} and #{endDay})
+	
+<!-- 	<if test="teacher.emplId != null"> -->
+<!-- 		and t.emplId = #{teacher.emplId} -->
+<!-- 	</if> -->
+	<if test="teacherId != null">
+		and t.teacher_id = #{teacherId}
+	</if>
+	<if test="classesId != null">
+		and sch.classes_id = #{classesId} 
+	</if>
+	
+  </select>
+ 
+ 
+  <!--根据课程主键获取课时信息 -->
+  <select id="getScheduleBySchedulePk" parameterType="cn.bdqn.pojo.Schedule" resultMap="ScheduleForWeek">
+  	select
+	sch.schedule_pk,
+	sch.sch_date,
+	sch.sch_time,
+	sch.classes_id,
+	sch.room_id sroom_id,
+	sch.teacher_id steacher_id,
+	sch.course_id,
+	sch.`week`,
+	sch.dr sdr,
+
+	ro.room_id rroom_id,
+	ro.room_name,
+	ro.room_size,
+	ro.dr rdr,
+
+	cla.class_pk,
+	cla.stu_num,
+	cla.class_name,
+	cla.major,
+	cla.teacher_id cteacher_id,
+	cla.instructor_id,
+	cla.dr cdr,
+
+	t.teacher_id tteacher_id,
+	t.`name`,
+	t.gender,
+	t.schedule_name,
+	t.dr tdr,
+	t.emplId,
+	
+c.course_pk ccourse_pk,
+  	c.course_name ccourse_name,
+  	c.course_content ccourse_content,
+  	c.dr cdr
+	from schedule sch,room ro,classes cla,teacher t,course c
+
+	where cla.class_pk =sch.classes_id
+	and ro.room_id = sch.room_id
+	and t.teacher_id = sch.teacher_id
+	and cla.class_pk = sch.classes_id
+	and c.course_pk = sch.course_id
+  	and sch.schedule_pk = #{schedulePk}
+  </select>
+  
+  <update id="updateSchedule" parameterType="cn.bdqn.pojo.Schedule" >
+  	update schedule
+  	set
+		  sch_date = #{schDate},
+		  sch_time = #{schTime},
+		  classes_id = #{classesId},
+		  room_id = #{roomId},
+		  teacher_id = #{teacherId},
+		  course_id = #{courseId}
+		where schedule_pk = #{schedulePk};
+  
+  </update>
+  
+</mapper>

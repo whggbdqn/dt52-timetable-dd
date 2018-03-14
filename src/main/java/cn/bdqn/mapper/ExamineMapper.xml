@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.bdqn.mapper.ExamineMapper" >
+  <resultMap id="BaseResultMap" type="cn.bdqn.pojo.Examine" >
+    <id column="examine_pk" property="examinePk" jdbcType="INTEGER" />
+    <result column="begin_teacher_id" property="beginTeacherId" jdbcType="VARCHAR"/>
+    <result column="examine_teacher_id" property="examineTeacherId" jdbcType="INTEGER" />
+    <result column="cc_teacher_id" property="ccTeacherId" jdbcType="INTEGER" />
+    <result column="schedule_pk" property="schedulePk" jdbcType="INTEGER" />
+    <result column="sch_date" property="schDate" jdbcType="DATE" />
+    <result column="sch_time" property="schTime" jdbcType="VARCHAR" />
+    <result column="classes_id" property="classesId" jdbcType="INTEGER" />
+    <result column="room_id" property="roomId" jdbcType="INTEGER" />
+    <result column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+    <result column="course_id" property="courseId" jdbcType="INTEGER" />
+    <result column="cause" property="cause" jdbcType="VARCHAR"/>
+    <result column="pass" property="pass" jdbcType="INTEGER"/>
+  </resultMap>
+
+  <resultMap id="ExamineMap" type="cn.bdqn.pojo.Examine" >
+    <id column="eexamine_pk" property="examinePk" jdbcType="INTEGER" />
+    <result column="ebegin_teacher_id" property="beginTeacherId" jdbcType="VARCHAR"/>
+    <result column="eexamine_teacher_id" property="examineTeacherId" jdbcType="INTEGER" />
+    <result column="ecc_teacher_id" property="ccTeacherId" jdbcType="INTEGER" />
+    <result column="eschedule_pk" property="schedulePk" jdbcType="INTEGER" />
+    <result column="esch_date" property="schDate" jdbcType="DATE" />
+    <result column="esch_time" property="schTime" jdbcType="VARCHAR" />
+    <result column="eclasses_id" property="classesId" jdbcType="INTEGER" />
+    <result column="eroom_id" property="roomId" jdbcType="INTEGER" />
+    <result column="eteacher_id" property="teacherId" jdbcType="INTEGER" />
+    <result column="ecourse_id" property="courseId" jdbcType="INTEGER" />
+    <result column="ecause" property="cause" jdbcType="VARCHAR"/>
+    <result column="epass" property="pass" jdbcType="INTEGER"/>
+    
+    <association property="beginTeacher" javaType="cn.bdqn.pojo.Teacher">
+  		<id column="bteacher_id" property="teacherId" jdbcType="INTEGER" />
+	    <result column="bname" property="name" jdbcType="VARCHAR" />
+	    <result column="bgender" property="gender" jdbcType="VARCHAR" />
+	    <result column="bschedule_name" property="scheduleName" jdbcType="VARCHAR" />
+	    <result column="bdr" property="dr" jdbcType="INTEGER" />
+	    <result column="bemplId" property="emplId" javaType="STRING" />
+  	</association>
+  	
+  	<association property="examineTeacher" javaType="cn.bdqn.pojo.Teacher">
+  		<id column="eteacher_id" property="teacherId" jdbcType="INTEGER" />
+	    <result column="ename" property="name" jdbcType="VARCHAR" />
+	    <result column="egender" property="gender" jdbcType="VARCHAR" />
+	    <result column="eschedule_name" property="scheduleName" jdbcType="VARCHAR" />
+	    <result column="edr" property="dr" jdbcType="INTEGER" />
+	    <result column="eemplId" property="emplId" javaType="STRING" />
+  	</association>
+  	
+  	<association property="ccTeacher" javaType="cn.bdqn.pojo.Teacher">
+  		<id column="cteacher_id" property="teacherId" jdbcType="INTEGER" />
+	    <result column="cname" property="name" jdbcType="VARCHAR" />
+	    <result column="cgender" property="gender" jdbcType="VARCHAR" />
+	    <result column="cschedule_name" property="scheduleName" jdbcType="VARCHAR" />
+	    <result column="cdr" property="dr" jdbcType="INTEGER" />
+	    <result column="cemplId" property="emplId" javaType="STRING" />
+  	</association>
+  	
+  	<association property="className" javaType="cn.bdqn.pojo.Classes">
+  		<id column="class_pk" property="classPk" jdbcType="INTEGER" />
+	    <result column="stu_num" property="stuNum" jdbcType="INTEGER" />
+	    <result column="class_name" property="className" jdbcType="VARCHAR" />
+	    <result column="major" property="major" jdbcType="VARCHAR" />
+	    <result column="clteacher_id" property="teacherId" jdbcType="INTEGER" />
+	    <result column="instructor_id" property="instructorId" jdbcType="INTEGER" />
+	    <result column="cldr" property="dr" jdbcType="INTEGER" />
+  	</association>
+  	
+  	<association property="roomName" javaType="cn.bdqn.pojo.Room">
+  		<id column="rroom_id" property="roomId" jdbcType="INTEGER" />
+	    <result column="room_name" property="roomName" jdbcType="VARCHAR" />
+	    <result column="room_size" property="roomSize" jdbcType="INTEGER" />
+	    <result column="rdr" property="dr" jdbcType="INTEGER" />
+  	</association>
+  	
+  	<association property="teacherName" javaType="cn.bdqn.pojo.Teacher">
+  		<id column="tteacher_id" property="teacherId" jdbcType="INTEGER" />
+	    <result column="tname" property="name" jdbcType="VARCHAR" />
+	    <result column="tgender" property="gender" jdbcType="VARCHAR" />
+	    <result column="tschedule_name" property="scheduleName" jdbcType="VARCHAR" />
+	    <result column="tdr" property="dr" jdbcType="INTEGER" />
+	    <result column="templId" property="emplId" javaType="STRING" />
+  	</association>
+  	
+  	<association property="courseName" javaType="cn.bdqn.pojo.Course">
+  		<id column="course_pk" property="coursePk" jdbcType="INTEGER" />
+	    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
+	    <result column="course_content" property="courseContent" jdbcType="VARCHAR" />
+	    <result column="codr" property="dr" jdbcType="INTEGER" />
+  	</association>
+  </resultMap>
+
+
+<!-- 添加审批记录 -->
+  <insert id="addExamine" parameterType="cn.bdqn.pojo.Examine">
+  	insert into examine (
+  	  begin_teacher_id,
+	  examine_teacher_id,
+	  cc_teacher_id,
+	  schedule_pk,
+	  sch_date,
+	  sch_time,
+	  classes_id,
+	  room_id,
+	  teacher_id,
+	  course_id,
+	  cause
+	)
+	values
+	  (
+	  	#{beginTeacherId},
+	    #{examineTeacherId},
+	    #{ccTeacherId},
+	    #{schedulePk},
+	    #{schDate},
+	    #{schTime},
+	    #{classesId},
+	    #{roomId},
+	    #{teacherId},
+	    #{courseId},
+	    #{cause}
+	  );
+  </insert>
+
+<!-- 根据发起人查看审批信息 -->
+	<select id="getExamineByBeginId" resultMap="ExamineMap" parameterType="string">
+
+		select
+			e.examine_pk eexamine_pk,
+			e.begin_teacher_id ebegin_teacher_id,
+			e.examine_teacher_id eexamine_teacher_id,
+			e.cc_teacher_id ecc_teacher_id,
+			e.schedule_pk eschedule_pk,
+			e.sch_date esch_date,
+			e.sch_time esch_time,
+			e.classes_id eclasses_id,
+			e.room_id eroom_id,
+			e.teacher_id eteacher_id,
+			e.course_id ecourse_id,
+			e.cause ecause,
+			e.pass epass,
+		
+			t.teacher_id bteacher_id,
+			t.name bname,
+			t.gender bgender,
+			t.schedule_name bschedule_name,
+			t.dr bdr,
+			t.emplId bemplId,
+		
+			te.teacher_id eteacher_id,
+			te.name ename,
+			te.gender egender,
+			te.schedule_name
+			eschedule_name,
+			te.dr edr,
+			te.emplId eemplId,
+		
+			tea.teacher_id cteacher_id,
+			tea.name cname,
+			tea.gender cgender,
+			tea.schedule_name
+			cschedule_name,
+			tea.dr cdr,
+			tea.emplId cemplId,
+		
+			teac.teacher_id tteacher_id,
+			teac.name
+			tname,
+			teac.gender tgender,
+			teac.schedule_name
+			tschedule_name,
+			teac.dr tdr,
+			teac.emplId templId,
+		
+			cl.class_pk,
+			cl.stu_num,
+			cl.class_name,
+			cl.major,
+			cl.teacher_id clteacher_id,
+			cl.instructor_id,
+			cl.dr cldr,
+		
+			r.room_id rroom_id,
+			r.room_name,
+			r.room_size,
+			r.dr rdr,
+		
+			co.course_pk,
+			co.course_name,
+			co.course_content,
+			co.dr codr
+		
+			from
+			examine e,teacher t,teacher te,teacher tea,teacher teac,classes cl,room r,course co
+			
+			where 	
+			
+			e.begin_teacher_id = t.emplId and
+			e.examine_teacher_id = te.teacher_id and
+			e.cc_teacher_id = tea.teacher_id and
+			e.teacher_id = teac.teacher_id and
+			e.classes_id = cl.class_pk and
+			e.room_id = r.room_id and 
+			e.course_id = co.course_pk and
+			e.begin_teacher_id = #{value}
+			
+			order by e.examine_pk desc
+	
+			
+		
+	</select>
+
+
+<!-- 待我审批 -->
+	<select id="getExamineByExamine" resultMap="ExamineMap" parameterType="string">
+		select
+			e.examine_pk eexamine_pk,
+			e.begin_teacher_id ebegin_teacher_id,
+			e.examine_teacher_id eexamine_teacher_id,
+			e.cc_teacher_id ecc_teacher_id,
+			e.schedule_pk eschedule_pk,
+			e.sch_date esch_date,
+			e.sch_time esch_time,
+			e.classes_id eclasses_id,
+			e.room_id eroom_id,
+			e.teacher_id eteacher_id,
+			e.course_id ecourse_id,
+			e.cause ecause,
+			e.pass epass,
+		
+			t.teacher_id bteacher_id,
+			t.name bname,
+			t.gender bgender,
+			t.schedule_name bschedule_name,
+			t.dr bdr,
+			t.emplId bemplId,
+		
+			te.teacher_id eteacher_id,
+			te.name ename,
+			te.gender egender,
+			te.schedule_name
+			eschedule_name,
+			te.dr edr,
+			te.emplId eemplId,
+		
+			tea.teacher_id cteacher_id,
+			tea.name cname,
+			tea.gender cgender,
+			tea.schedule_name
+			cschedule_name,
+			tea.dr cdr,
+			tea.emplId cemplId,
+		
+			teac.teacher_id tteacher_id,
+			teac.name
+			tname,
+			teac.gender tgender,
+			teac.schedule_name
+			tschedule_name,
+			teac.dr tdr,
+			teac.emplId templId,
+		
+			cl.class_pk,
+			cl.stu_num,
+			cl.class_name,
+			cl.major,
+			cl.teacher_id clteacher_id,
+			cl.instructor_id,
+			cl.dr cldr,
+		
+			r.room_id rroom_id,
+			r.room_name,
+			r.room_size,
+			r.dr rdr,
+		
+			co.course_pk,
+			co.course_name,
+			co.course_content,
+			co.dr codr
+		
+			from
+			examine e,teacher t,teacher te,teacher tea,teacher teac,classes cl,room r,course co
+			
+			where 	
+			
+			e.begin_teacher_id = t.emplId and
+			e.examine_teacher_id = te.teacher_id and
+			e.cc_teacher_id = tea.teacher_id and
+			e.teacher_id = teac.teacher_id and
+			e.classes_id = cl.class_pk and
+			e.room_id = r.room_id and 
+			e.course_id = co.course_pk and
+			e.examine_teacher_id = (  select teacher_id from teacher where emplId = #{value}) and
+			pass = 0
+			order by e.examine_pk desc
+	
+	
+	</select>
+
+<!-- 我已审批 -->
+	<select id="getExamineByExamine2" resultMap="ExamineMap" parameterType="string">
+		select
+			e.examine_pk eexamine_pk,
+			e.begin_teacher_id ebegin_teacher_id,
+			e.examine_teacher_id eexamine_teacher_id,
+			e.cc_teacher_id ecc_teacher_id,
+			e.schedule_pk eschedule_pk,
+			e.sch_date esch_date,
+			e.sch_time esch_time,
+			e.classes_id eclasses_id,
+			e.room_id eroom_id,
+			e.teacher_id eteacher_id,
+			e.course_id ecourse_id,
+			e.cause ecause,
+			e.pass epass,
+		
+			t.teacher_id bteacher_id,
+			t.name bname,
+			t.gender bgender,
+			t.schedule_name bschedule_name,
+			t.dr bdr,
+			t.emplId bemplId,
+		
+			te.teacher_id eteacher_id,
+			te.name ename,
+			te.gender egender,
+			te.schedule_name
+			eschedule_name,
+			te.dr edr,
+			te.emplId eemplId,
+		
+			tea.teacher_id cteacher_id,
+			tea.name cname,
+			tea.gender cgender,
+			tea.schedule_name
+			cschedule_name,
+			tea.dr cdr,
+			tea.emplId cemplId,
+		
+			teac.teacher_id tteacher_id,
+			teac.name
+			tname,
+			teac.gender tgender,
+			teac.schedule_name
+			tschedule_name,
+			teac.dr tdr,
+			teac.emplId templId,
+		
+			cl.class_pk,
+			cl.stu_num,
+			cl.class_name,
+			cl.major,
+			cl.teacher_id clteacher_id,
+			cl.instructor_id,
+			cl.dr cldr,
+		
+			r.room_id rroom_id,
+			r.room_name,
+			r.room_size,
+			r.dr rdr,
+		
+			co.course_pk,
+			co.course_name,
+			co.course_content,
+			co.dr codr
+		
+			from
+			examine e,teacher t,teacher te,teacher tea,teacher teac,classes cl,room r,course co
+			
+			where 	
+			
+			e.begin_teacher_id = t.emplId and
+			e.examine_teacher_id = te.teacher_id and
+			e.cc_teacher_id = tea.teacher_id and
+			e.teacher_id = teac.teacher_id and
+			e.classes_id = cl.class_pk and
+			e.room_id = r.room_id and 
+			e.course_id = co.course_pk and
+			e.examine_teacher_id = (  select teacher_id from teacher where emplId = #{value}) and
+			(pass = 1 or pass = 2)
+			order by e.examine_pk desc
+	
+	</select>
+
+
+<!-- 抄送我的 -->
+	<select id="getExamineByCc" resultMap="ExamineMap" parameterType="string">
+		select
+			e.examine_pk eexamine_pk,
+			e.begin_teacher_id ebegin_teacher_id,
+			e.examine_teacher_id eexamine_teacher_id,
+			e.cc_teacher_id ecc_teacher_id,
+			e.schedule_pk eschedule_pk,
+			e.sch_date esch_date,
+			e.sch_time esch_time,
+			e.classes_id eclasses_id,
+			e.room_id eroom_id,
+			e.teacher_id eteacher_id,
+			e.course_id ecourse_id,
+			e.cause ecause,
+			e.pass epass,
+		
+			t.teacher_id bteacher_id,
+			t.name bname,
+			t.gender bgender,
+			t.schedule_name bschedule_name,
+			t.dr bdr,
+			t.emplId bemplId,
+		
+			te.teacher_id eteacher_id,
+			te.name ename,
+			te.gender egender,
+			te.schedule_name
+			eschedule_name,
+			te.dr edr,
+			te.emplId eemplId,
+		
+			tea.teacher_id cteacher_id,
+			tea.name cname,
+			tea.gender cgender,
+			tea.schedule_name
+			cschedule_name,
+			tea.dr cdr,
+			tea.emplId cemplId,
+		
+			teac.teacher_id tteacher_id,
+			teac.name
+			tname,
+			teac.gender tgender,
+			teac.schedule_name
+			tschedule_name,
+			teac.dr tdr,
+			teac.emplId templId,
+		
+			cl.class_pk,
+			cl.stu_num,
+			cl.class_name,
+			cl.major,
+			cl.teacher_id clteacher_id,
+			cl.instructor_id,
+			cl.dr cldr,
+		
+			r.room_id rroom_id,
+			r.room_name,
+			r.room_size,
+			r.dr rdr,
+		
+			co.course_pk,
+			co.course_name,
+			co.course_content,
+			co.dr codr
+		
+			from
+			examine e,teacher t,teacher te,teacher tea,teacher teac,classes cl,room r,course co
+			
+			where 	
+			
+			e.begin_teacher_id = t.emplId and
+			e.examine_teacher_id = te.teacher_id and
+			e.cc_teacher_id = tea.teacher_id and
+			e.teacher_id = teac.teacher_id and
+			e.classes_id = cl.class_pk and
+			e.room_id = r.room_id and 
+			e.course_id = co.course_pk and
+			e.cc_teacher_id = (  select teacher_id from teacher where emplId = #{value})
+			order by e.examine_pk desc
+	
+	
+	</select>
+
+<!-- 根据审批主键获取一条审批信息 -->
+	<select id="getExamineById" resultMap="BaseResultMap" parameterType="integer">
+		select * from examine where examine_pk = #{value}
+	</select>
+
+<!-- 通过主键修改一条信息为审批通过状态 -->
+	<update id="agree" parameterType="integer">
+		update examine 
+		set
+			pass = 1
+	    where examine_pk = #{value}
+	</update>
+<!-- 通过主键修改一条信息为拒绝状态 -->
+	<update id="refuse" parameterType="integer">
+		update examine 
+		set
+			pass = 2
+	    where examine_pk = #{value}
+	
+	</update>
+</mapper>
